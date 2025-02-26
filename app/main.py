@@ -1,8 +1,17 @@
 import os
 import requests
+from hubspot import HubSpot
 
-os.getenv("HUBSPOT_API_KEY")
 
+
+HUBSPOT_API_KEY = os.getenv("HUBSPOT_API_KEY")
+
+if HUBSPOT_API_KEY is None or HUBSPOT_API_KEY == "":
+    raise Exception("HUBSPOT API KEY is empty.")
+
+api_client = HubSpot(access_token=HUBSPOT_API_KEY)
+
+api_client.crm.companies.basic_api.update_with_http_info()
 
 def get_company(company_url : str, company_name : str = None):
     '''
@@ -29,7 +38,7 @@ def lead_enrich(company_object : object):
 
     }
 
-    requests.post("some URL of a provider that does lead enrichment", headers=headers, payload=data)
+    # requests.post("some URL of a provider that does lead enrichment", headers=headers, payload=data)
 
     pass
 
@@ -85,3 +94,12 @@ def lambda_handler(event, context):
         'statusCode': 200,
         'Message': "Successfully enriched company"
     }
+
+
+data = {
+    "company_name": "Sound Decisions",
+    "company_url": "https://sounddecisions.co/"
+}
+
+
+print(lambda_handler(data, None))
